@@ -1,0 +1,32 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  roles:
+    - role: vvision.acme
+      vars:
+        is_test: true
+        acme_code_version: 3.0.0
+        acme_account_email: ${UNICODA_ACME_MAIL}
+        # OVH Configuration
+        acme_configure_ovh_dns_api: true
+        acme_ovh_application_key: ${UNICODA_OVH_AK}
+        acme_ovh_application_secret: ${UNICODA_OVH_AS}
+        acme_ovh_consumer_key: ${UNICODA_OVH_CK}
+        # Gandi Configuration
+        acme_configure_gandi_dns_api: true
+        acme_gandi_livedns_key: ${UNICODA_GANDI_LIVEDNS_KEY}
+        certs_to_issue:
+          - {
+            domains: [ ${UNICODA_ACME_CERT_1}, ${UNICODA_ACME_CERT_2} ],
+            install_dir: gandi-test-cert,
+            key_length: 4096,
+            dns: dns_gandi_livedns,
+          }
+          - {
+            domains: [ ${UNICODA_ACME_CERT_OVH} ],
+            install_dir: ovh-test-cert,
+            key_length: 4096,
+            dns: dns_ovh,
+          }

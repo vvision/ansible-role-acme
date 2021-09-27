@@ -1,0 +1,61 @@
+---
+- name: ACME | Upgrade packages
+  become: true
+  apt:
+    update_cache: yes
+    upgrade: safe
+    #cache_valid_time: 3600
+
+- name: ACME | Install packages
+  apt:
+    name: ['openssl', 'cron', 'curl', 'git', 'netcat-openbsd']
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: ACME | Get acme.sh from github
+  git:
+    repo: 'https://github.com/acmesh-official/acme.sh.git'
+    version: "{{ acme_code_version }}"
+    dest: /tmp/acme
+
+- name: Create install folder if needed
+  file:
+    path: "{{ acme_install_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Create config folder if needed
+  file:
+    path: "{{ acme_config_folder }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+#- name: Create cert folder if needed
+#  file:
+#    path: "{{ acme_cert_folder }}"
+#    state: directory
+#    owner: root
+#    group: root
+#    mode: 0700
+
+#    --home is a customized dir to install acme.sh in. By default, it installs into ~/.acme.sh
+#    --config-home is a writable folder, acme.sh will write all the files(including cert/keys, configs) there. By default, it's in --home
+#    --cert-home is a customized dir to save the certs you issue. By default, it's saved in --config-home.
+#    --accountemail is the email used to register account to Let's Encrypt, you will receive renewal notice email here. Default is empty.
+#    --accountkey is the file saving your account private key. By default it's saved in --config-home.
+#    --useragent is the user-agent header value used to send to Let's Encrypt.
+- name: ACME | Install acme.sh
+  command: >
+    ./acme.sh --install \
+      --home {{ acme_install_dir }} \
+      --config-home {{ acme_config_folder }} \
+      --accountemail "{{ acme_account_email }}"
+  args:
+    chdir: /tmp/acme/
+    # Does not work
+    # --cert-home {{ acme_cert_folder }} \

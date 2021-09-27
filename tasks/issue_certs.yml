@@ -1,0 +1,83 @@
+---
+- name: Create cert destination folder {{ acme_dest_folder }}
+  file:
+    path: "{{ acme_dest_folder }}/"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+# Relative to acme_dest_folder
+- name: Determine install directory
+  set_fact:
+    cert_dest_dir: "{{ cert.install_dir}}"
+  when: cert.install_dir is defined
+
+- name: Determine install directory
+  set_fact:
+    cert_dest_dir: "{{ cert.domains | first }}"
+  when: cert.install_dir is not defined
+
+- name: Create cert folder {{ cert_dest_dir }}
+  file:
+    path: "{{ acme_dest_folder }}/{{ cert_dest_dir }}/"
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: check if cert file exists
+  stat:
+    path: "{{ acme_dest_folder }}/{{ cert_dest_dir }}/cert.pem"
+  register: cert_file
+
+- name: Should run as test {{ is_test }}
+  set_fact:
+    run_as_test: "--test"
+  when: is_test | bool
+
+- name: Join domain option
+  set_fact:
+    domains_param: "-d {{ cert.domains | join(' -d ') }}"
+
+- name: Configure reloadcmd
+  set_fact:
+    reload_command_param: "--reloadcmd {{ cert.reloadcmd }}"
+  when: cert.reloadcmd is defined
+
+- name: Get certificats for {{ cert.domains }}
+  command: >
+    ./acme.sh {{ run_as_test | default('') }} \
+    --issue \
+    --keylength {{ cert.key_length }} \
+    --dns {{ cert.dns }} \
+    {{ domains_param }} \
+    --log \
+    --force
+  args:
+    chdir: "{{ acme_install_dir }}"
+    creates: "{{ acme_config_folder }}/{{ cert.domains | first }}/{{ cert.domains | first }}.cer"
+  environment:
+    GANDI_LIVEDNS_KEY: "{{ acme_gandi_livedns_key | default('') }}"
+    OVH_END_POINT: "{{ acme_ovh_end_point | default('') }}"
+    OVH_AK: "{{ acme_ovh_application_key | default('') }}"
+    OVH_AS: "{{ acme_ovh_application_secret | default('') }}"
+    OVH_CK: "{{ acme_ovh_consumer_key | default('') }}"
+  when: not cert_file.stat.exists
+
+# Keep in mind that when running --cron,
+# any newly-renewed certificates will automatically be installed, and the reloadcmd will be run.
+- name: Install certificat for {{ cert.domains }}
+  command: >
+    ./acme.sh \
+    --install-cert \
+    {{ domains_param }} \
+    --cert-file {{ acme_dest_folder }}/{{ cert_dest_dir }}/{{ cert_file_name }} \
+    --key-file {{ acme_dest_folder }}/{{ cert_dest_dir }}/{{ key_file_name }} \
+    --fullchain-file {{ acme_dest_folder }}/{{ cert_dest_dir }}/{{ fullchain_file_name }} \
+    {{ reload_command_param | default('') }} \
+    --log
+  args:
+    chdir: "{{ acme_install_dir }}"
+    creates: "{{ acme_dest_folder }}/{{ cert_dest_dir }}/cert.pem"
+  # when: not cert_file.stat.exists

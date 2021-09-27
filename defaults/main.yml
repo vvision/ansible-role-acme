@@ -1,0 +1,26 @@
+---
+# 3.0.0 (tag name) or HEAD or branch name or SHA1 hash
+acme_code_version: HEAD
+acme_account_email:
+acme_install_dir: /home/acme/acme
+acme_config_folder: /home/acme/acme-config
+# acme_cert_folder: /home/acme/acme-cert
+
+# OVH DNS Configuration
+acme_configure_ovh_dns_api: false
+acme_ovh_end_point: ovh-eu
+acme_ovh_application_key:
+acme_ovh_application_secret:
+acme_ovh_consumer_key:
+
+# Gandi DNS Configuration
+acme_configure_gandi_dns_api: false
+acme_gandi_livedns_key:
+
+# Certificate configuration
+is_test: false
+acme_dest_folder: /etc/ssl/live
+cert_file_name: cert.pem
+key_file_name: privkey.pem
+fullchain_file_name: chain.pem
+certs_to_issue:

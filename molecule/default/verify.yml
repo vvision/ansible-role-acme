@@ -1,0 +1,56 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Check if acme.sh is present
+      stat:
+        path: "/home/acme/acme/acme.sh"
+      register: acme_script
+
+    - name: Verify installation
+      assert:
+        that:
+        - "acme_script.stat.exists"
+
+    - name: Check if gandi cer is present
+      stat:
+        path: "/root/.acme.sh/{{ lookup('UNICODA_ACME_CERT_1','SHELL') }}/{{ lookup('UNICODA_ACME_CERT_1','SHELL') }}.cer"
+      register: gandi_cer
+
+    - name: Verify gandi certificate issue
+      assert:
+        that:
+          - "gandi_cer.stat.exists"
+
+    - name: Test gandi renew command
+      command: >
+        ./acme.sh \
+        --test \
+        --renew \
+        -d {{ lookup('UNICODA_ACME_CERT_1','SHELL') }} \
+        -d {{ lookup('UNICODA_ACME_CERT_2','SHELL') }} \
+        --force \
+        --log
+      args:
+        chdir: "/home/acme/acme"
+
+    - name: Check if ovh cer is present
+      stat:
+        path: "/root/.acme.sh/{{ lookup('UNICODA_ACME_CERT_OVH','SHELL') }}/{{ lookup('UNICODA_ACME_CERT_OVH','SHELL') }}.cer"
+      register: ovh_cer
+
+    - name: Verify ovh certificate issue
+      assert:
+        that:
+          - "ovh_cer.stat.exists"
+
+    - name: Test ovh renew command
+      command: >
+        ./acme.sh \
+        --test \
+        --renew \
+        -d {{ lookup('UNICODA_ACME_CERT_OVH','SHELL') }} \
+        --force \
+        --log
+      args:
+        chdir: "/home/acme/acme"

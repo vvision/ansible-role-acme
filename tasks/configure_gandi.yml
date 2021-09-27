@@ -1,0 +1,18 @@
+---
+- name: Create file /etc/profile.d/acme_gandi_dns.sh
+  file:
+    path: "/etc/profile.d/acme_gandi_dns.sh"
+    state: touch
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Persist GANDI_LIVEDNS_KEY
+  lineinfile:
+    dest: "{{ item.path }}"
+    regexp: "^GANDI_LIVEDNS_KEY"
+    line: "{{ item.should_export | ternary('export ', omit) }}GANDI_LIVEDNS_KEY={{ acme_gandi_livedns_key }}"
+    state: present
+  with_items:
+    - { path: "/etc/environment", should_export: false }
+    - { path: "/etc/profile.d/acme_gandi_dns.sh", should_export: true }

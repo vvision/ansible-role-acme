@@ -1,32 +1,18 @@
 ---
-- name: ACME | Upgrade packages
-  become: true
-  apt:
-    update_cache: yes
-    upgrade: safe
-    #cache_valid_time: 3600
+- name: INCLUDE | Install acme.sh
+  import_tasks: install.yml
 
-- name: ACME | Install packages
-  apt:
-    name: ['openssl', 'cron',  'netcat-openbsd',  'curl']
-    state: present
-    update_cache: yes
-    cache_valid_time: 3600
+- name: INCLUDE | Configure OVH credentials for DNS api
+  import_tasks: configure_ovh.yml
+  when: acme_configure_ovh_dns_api | bool
 
-- name: ACME | Get acme.sh from github
-  git:
-    repo: 'https://github.com/Neilpang/acme.sh.git'
-    dest: /tmp/acme
+- name: INCLUDE | Configure Gandi credentials for DNS api
+  import_tasks: configure_gandi.yml
+  when: acme_configure_gandi_dns_api | bool
 
-#    --home is a customized dir to install acme.sh in. By default, it installs into ~/.acme.sh
-#    --config-home is a writable folder, acme.sh will write all the files(including cert/keys, configs) there. By default, it's in --home
-#    --cert-home is a customized dir to save the certs you issue. By default, it's saved in --config-home.
-#    --accountemail is the email used to register account to Let's Encrypt, you will receive renewal notice email here. Default is empty.
-#    --accountkey is the file saving your account private key. By default it's saved in --config-home.
-#    --useragent is the user-agent header value used to send to Let's Encrypt.
-- name: ACME | Install acme.sh
-  shell: ./acme.sh --install --home /home/vvision/acme --accountemail "contact@unicoda.com"
-    # --accountconf ~/myaccount.conf \
-  # --useragent  "this is my client."
-  args:
-    chdir: /tmp/acme/
+- name: INCLUDE | Configure certificates
+  include_tasks: issue_certs.yml
+  when: certs_to_issue
+  with_items: "{{ certs_to_issue }}"
+  loop_control:
+    loop_var: cert
