@@ -8,24 +8,24 @@
       vars:
         is_test: true
         acme_code_version: 3.0.0
-        acme_account_email: ${UNICODA_ACME_MAIL}
+        acme_account_email: {{ lookup('UNICODA_ACME_MAIL','SHELL') }}
         # OVH Configuration
         acme_configure_ovh_dns_api: true
-        acme_ovh_application_key: ${UNICODA_OVH_AK}
-        acme_ovh_application_secret: ${UNICODA_OVH_AS}
-        acme_ovh_consumer_key: ${UNICODA_OVH_CK}
+        acme_ovh_application_key: {{ lookup('UNICODA_OVH_AK','SHELL') }}
+        acme_ovh_application_secret: {{ lookup('UNICODA_OVH_AS','SHELL') }}
+        acme_ovh_consumer_key: {{ lookup('UNICODA_OVH_CK','SHELL') }}
         # Gandi Configuration
         acme_configure_gandi_dns_api: true
-        acme_gandi_livedns_key: ${UNICODA_GANDI_LIVEDNS_KEY}
+        acme_gandi_livedns_key: {{ lookup('UNICODA_GANDI_LIVEDNS_KEY','SHELL') }}
         certs_to_issue:
           - {
-            domains: [ ${UNICODA_ACME_CERT_1}, ${UNICODA_ACME_CERT_2} ],
+            domains: [ {{ lookup('UNICODA_ACME_CERT_1','SHELL') }}, {{ lookup('UNICODA_ACME_CERT_2','SHELL') }} ],
             install_dir: gandi-test-cert,
             key_length: 4096,
             dns: dns_gandi_livedns,
           }
           - {
-            domains: [ ${UNICODA_ACME_CERT_OVH} ],
+            domains: [ {{ lookup('UNICODA_ACME_CERT_OVH','SHELL') }} ],
             install_dir: ovh-test-cert,
             key_length: 4096,
             dns: dns_ovh,
