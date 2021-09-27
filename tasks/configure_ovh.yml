@@ -1,18 +1,11 @@
 ---
-- name: Create file /etc/profile.d/acme_ovh_dns.sh
-  file:
-    path: "/etc/profile.d/acme_ovh_dns.sh"
-    state: touch
-    owner: root
-    group: root
-    mode: 0700
-
 - name: Persist OVH_AK
   lineinfile:
     dest: "{{ item.path }}"
     regexp: "^OVH_AK"
-    line: "{{ item.should_export | ternary('export ', omit) }}OVH_AK={{ acme_ovh_application_key }}"
+    line: "{{ item.should_export | ternary('export ', '') }}OVH_AK={{ acme_ovh_application_key }}"
     state: present
+    create: yes
   with_items:
     - { path: "/etc/environment", should_export: false }
     - { path: "/etc/profile.d/acme_ovh_dns.sh", should_export: true }
@@ -21,8 +14,9 @@
   lineinfile:
     dest: "{{ item.path }}"
     regexp: "^OVH_AS"
-    line: "{{ item.should_export | ternary('export ', omit) }}OVH_AS={{ acme_ovh_application_secret }}"
+    line: "{{ item.should_export | ternary('export ', '') }}OVH_AS={{ acme_ovh_application_secret }}"
     state: present
+    create: yes
   with_items:
     - { path: "/etc/environment", should_export: false }
     - { path: "/etc/profile.d/acme_ovh_dns.sh", should_export: true }
@@ -31,8 +25,9 @@
   lineinfile:
     dest: "{{ item.path }}"
     regexp: "^OVH_CK"
-    line: "{{ item.should_export | ternary('export ', omit) }}OVH_CK={{ acme_ovh_consumer_key }}"
+    line: "{{ item.should_export | ternary('export ', '') }}OVH_CK={{ acme_ovh_consumer_key }}"
     state: present
+    create: yes
   with_items:
     - { path: "/etc/environment", should_export: false }
     - { path: "/etc/profile.d/acme_ovh_dns.sh", should_export: true }

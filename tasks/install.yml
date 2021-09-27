@@ -35,6 +35,11 @@
     group: root
     mode: 0700
 
+- name: check if acme script file exists
+  stat:
+    path: "{{ acme_install_dir }}/acme.sh"
+  register: acme_sh_file
+
 #- name: Create cert folder if needed
 #  file:
 #    path: "{{ acme_cert_folder }}"
@@ -57,5 +62,6 @@
       --accountemail "{{ acme_account_email }}"
   args:
     chdir: /tmp/acme/
+  when: not acme_sh_file.stat.exists
     # Does not work
     # --cert-home {{ acme_cert_folder }} \
