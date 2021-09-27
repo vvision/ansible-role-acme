@@ -14,7 +14,7 @@
 
     - name: Check if gandi cer is present
       stat:
-        path: "/root/.acme.sh/{{ lookup('UNICODA_ACME_CERT_1','SHELL') }}/{{ lookup('UNICODA_ACME_CERT_1','SHELL') }}.cer"
+        path: "/root/.acme.sh/{{ lookup('env','UNICODA_ACME_CERT_1') }}/{{ lookup('env','UNICODA_ACME_CERT_1') }}.cer"
       register: gandi_cer
 
     - name: Verify gandi certificate issue
@@ -27,8 +27,8 @@
         ./acme.sh \
         --test \
         --renew \
-        -d {{ lookup('UNICODA_ACME_CERT_1','SHELL') }} \
-        -d {{ lookup('UNICODA_ACME_CERT_2','SHELL') }} \
+        -d {{ lookup('env','UNICODA_ACME_CERT_1') }} \
+        -d {{ lookup('env','UNICODA_ACME_CERT_2') }} \
         --force \
         --log
       args:
@@ -36,7 +36,7 @@
 
     - name: Check if ovh cer is present
       stat:
-        path: "/root/.acme.sh/{{ lookup('UNICODA_ACME_CERT_OVH','SHELL') }}/{{ lookup('UNICODA_ACME_CERT_OVH','SHELL') }}.cer"
+        path: "/root/.acme.sh/{{ lookup('env','UNICODA_ACME_CERT_OVH') }}/{{ lookup('env','UNICODA_ACME_CERT_OVH') }}.cer"
       register: ovh_cer
 
     - name: Verify ovh certificate issue
@@ -49,7 +49,7 @@
         ./acme.sh \
         --test \
         --renew \
-        -d {{ lookup('UNICODA_ACME_CERT_OVH','SHELL') }} \
+        -d {{ lookup('env','UNICODA_ACME_CERT_OVH') }} \
         --force \
         --log
       args:
