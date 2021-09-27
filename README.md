@@ -1,5 +1,7 @@
 # ansible-role-acme
 
+[![CI](https://github.com/vvision/ansible-role-acme/workflows/CI/badge.svg?event=push)](https://github.com/vvision/ansible-role-acme/actions?query=workflow%3ACI)
+
 Installs acme.sh on Debian servers.
 Also allow configuration of both OVH DNS API and GANDI DNS API,
 as well as issuing certificate with this 2 modes.
