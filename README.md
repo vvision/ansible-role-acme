@@ -32,7 +32,7 @@ Used by `--home` when installing acme.sh.
 Directory to store acme.sh configuration.
 Used by `--config-home` when installing acme.sh.
 
-#### OVH DNS Configuration
+### OVH DNS Configuration
 
 OVH DNS configuration is optional and disabled by default.
 
@@ -61,7 +61,7 @@ Application secret for OVH DNS API.
 
 Consumer key for OVH DNS API.
 
-#### Gandi DNS Configuration
+### Gandi DNS Configuration
 
 Gandi DNS configuration is optional and disabled by default.
 
@@ -77,7 +77,7 @@ Whether to configure Gandi DNS API environment variables.
 
 Gandi LiveDNS API key.
 
-#### Certificate configuration
+### Certificate configuration
 
 Certificate configuration is optional and disabled as `certs_to_issue` is empty by default.
 
@@ -119,7 +119,7 @@ certs_to_issue:
 
 Parameters are explained below.
 
-###### Certificate configuration
+#### Certificate configuration
 
     domains: [ test-cert-1.example.com, test-cert-2.example.com ]
 
