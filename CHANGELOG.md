@@ -1,4 +1,4 @@
 # Changelog
 
-## 0.0.1 (2021-09-27)
+## 1.0.0 (2021-09-28)
 Initial version published.
