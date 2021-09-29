@@ -127,7 +127,8 @@ List of domains to issue.
 
     install_dir: test-certs
 
-In which directory to install certificates. Built like ``<acme_dest_folder>/<install_dir>``
+In which directory to install certificates. Built like ``<acme_dest_folder>/<install_dir>``.
+If not specified, will use the name of the first certificate in the list.
 
     key_length: 4096
 
